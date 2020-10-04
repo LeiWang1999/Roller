@@ -12,7 +12,7 @@ data_transform = transforms.Compose(
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 # load image
-img = Image.open("sunflowers.jpeg")
+img = Image.open("images/sunflowers.jpeg")
 plt.imshow(img)
 # [N, C, H, W]
 img = data_transform(img)
