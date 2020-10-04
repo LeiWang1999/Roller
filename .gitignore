@@ -3,3 +3,4 @@ flower_data
 *.pth
 .DS_Store
 __pycache__
+temoCodeRunnerFile.py
