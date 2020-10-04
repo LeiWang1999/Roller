@@ -1,3 +1,5 @@
 flower_data
 !flower_data/.gitkeep
 *.pth
+.DS_Store
+__pycache__
