@@ -1,9 +1,9 @@
 import argparse
 import time
 
-import memopt
-from memopt import arch
-from memopt.engine import (Engine, MultiProcTunner, Tunner, load_model,
+import roller
+from roller import arch
+from roller.engine import (Engine, MultiProcTunner, Tunner, load_model,
                            save_results)
 
 if __name__ == "__main__":
@@ -12,12 +12,12 @@ if __name__ == "__main__":
     parser.add_argument('output_file', type=str, default="")
     parser.add_argument('--topk', type=int, default=10)
     parser.add_argument('--device', type=int, default=0)
-    parser.add_argument('--arch', type=str, default="V100")
+    parser.add_argument('--arch', type=str, default="cuda")
     parser.add_argument('--verbose', type=int, default=1)
     parser.add_argument('--check', action="store_true")
     parser.add_argument('--nofusion', action="store_true")
     args = parser.parse_args()
-    memopt.set_log_level(args.verbose)
+    roller.set_log_level(args.verbose)
     assert args.input_file.endswith(".json")
     start_time = time.time()
     ordered_nodes = load_model(args.input_file)

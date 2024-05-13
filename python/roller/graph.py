@@ -138,13 +138,15 @@ class IRNode(Node):
         if isinstance(compute, str):
             # print(compute)
             input_args, output_args = translate_ir_to_tvm(compute)
-        elif isinstance(compute, list):
+        elif isinstance(compute, list) or isinstance(compute, tuple):
             input_args, output_args = [], []
             for arg in compute:
                 if isinstance(arg.op, te.PlaceholderOp):
                     input_args.append(arg)
                 else:
                     output_args.append(arg)
+        else:
+            raise Exception(f"Invalid compute type {type(compute)}")
         self._output_names = [arg.name for arg in output_args]
         self.ana = get_analyzer_by_te(input_args + output_args)
         if len(input_args) < len(self.inputs):

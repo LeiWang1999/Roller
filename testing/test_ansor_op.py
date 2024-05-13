@@ -3,13 +3,13 @@ from ops import *
 import tvm
 from tvm import auto_scheduler
 import ctypes
-import memopt
-from memopt.tvm_build import tvm_build
+import roller
+from roller.tvm_build import tvm_build
 import os
 import hashlib
 
 def translate_to_tvm(expr, input_dict):
-    from memopt.lang.generic import einstein_v2, OUTPUT_TEMP, INPUT_TEMP
+    from roller.lang.generic import einstein_v2, OUTPUT_TEMP, INPUT_TEMP
     OUTPUT_TEMP.clear()
     INPUT_TEMP.clear()
     einstein_v2(expr, input_dict)
@@ -46,10 +46,10 @@ def test(expr, input_dict, name="ansor.log"):
 
     # run_tuning()
     sch, args = task.apply_best(log_file)
-    with memopt.Scope(sch) as scope:
+    with roller.Scope(sch) as scope:
         kernel_code = tvm_build(sch, args, "cuda", [], [], name="MyMatMul", global_kernel=True)
-        cp = memopt.utils.CompileResult(None, kernel_code, scope.block_size, scope.grid_size, "MyMatMul", args)
-        cp.compile_and_load(memopt.arch.V100())
+        cp = roller.utils.CompileResult(None, kernel_code, scope.block_size, scope.grid_size, "MyMatMul", args)
+        cp.compile_and_load(roller.arch.V100())
         print(cp.profile())
 
 # test(*matmul_nt(4096, 128, 128))

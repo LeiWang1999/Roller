@@ -60,15 +60,15 @@ def tvm_build(sch: SchedulerBase, target: tvm.target.Target, name: str = TVM_DEF
     def is_reuse_disabled(tensor_name):
         return tensor_name in [x.name + ".shared" for x in reuse_disabled_inputs]
 
-    tvm._ffi.register_func("memopt.is_independent_alloc", is_independent_alloc, override=True)
-    tvm._ffi.register_func("memopt.is_reuse_disabled", is_reuse_disabled, override=True)
+    tvm._ffi.register_func("roller.is_independent_alloc", is_independent_alloc, override=True)
+    tvm._ffi.register_func("roller.is_reuse_disabled", is_reuse_disabled, override=True)
 
     old_entry = tvm.get_global_func("tvm_callback_cuda_compile")
     tvm.register_func("tvm_callback_cuda_compile", override=True)(lambda x:"")
     src = sch.build(target)
     tvm.register_func("tvm_callback_cuda_compile", override=True)(old_entry)
-    tvm._ffi.register_func("memopt.is_independent_alloc", lambda x:False, override=True)
-    tvm._ffi.register_func("memopt.is_reuse_disabled", lambda x:False, override=True)
+    tvm._ffi.register_func("roller.is_independent_alloc", lambda x:False, override=True)
+    tvm._ffi.register_func("roller.is_reuse_disabled", lambda x:False, override=True)
 
     exteral_shared_memroy_size = {}
     total_internal_shared_memory = 0

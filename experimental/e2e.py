@@ -1,12 +1,12 @@
-import memopt
+import roller
 import numpy as np
 import tvm
-from memopt.arch import *
-from memopt.config import Config, Stride
-from memopt.debug import debug
-from memopt.graph import IRNode, OutputNode
-from memopt.policy import TCPolicy
-from memopt.reference import get_subgraph_reference_outputs
+from roller.arch import *
+from roller.config import Config, Stride
+from roller.debug import debug
+from roller.graph import IRNode, OutputNode
+from roller.policy import TCPolicy
+from roller.reference import get_subgraph_reference_outputs
 
 
 def get_matmul_expr(n, k, m):
@@ -52,7 +52,7 @@ def run_all():
     for node in configs:
         node.add_tag("tensorCoreConfig", (0, 1))
         configs[node] = Config().from_dict(configs[node]).complete_config(node)
-    cpresult = memopt.CodeGenerator().compile(output_nodes, configs, target, kernel_name="Fused")
+    cpresult = roller.CodeGenerator().compile(output_nodes, configs, target, kernel_name="Fused")
     cpresult.compile_and_load(V100())
     print(cpresult.code)
     out = cpresult.get_example_outputs()
@@ -85,11 +85,11 @@ def run_search():
     policy = TCPolicy(output_nodes, V100())
     configs = policy.emit_config(10)
     compile_results = []
-    cgen = memopt.CodeGenerator()
+    cgen = roller.CodeGenerator()
     for config in configs:
         cpresult = cgen.compile(output_nodes, config, target, kernel_name="Fused")
         compile_results.append(cpresult)
-    memopt.utils.compile_and_load_parallel(compile_results, V100())
+    roller.utils.compile_and_load_parallel(compile_results, V100())
     best_latency = 10000
     best = None
     values = []

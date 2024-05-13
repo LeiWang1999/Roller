@@ -30,19 +30,7 @@ class TCPolicy(DefaultPolicy):
         return A_stride, B_stride, C_stride
 
     def _use_cutlass_mma(self, node: IRNode, td: TileDict):
-        A_ax_m, A_ax_k, B_ax_k, B_ax_n, C_ax_m, C_ax_n = node.infer_tensorcore_axis()
-        tile = td.get_tile(node)
-        use_cutlass_warp_mma = True
-        use_cutlass_warp_mma &= tile[C_ax_m] % self.arch.cutlass_mma[0] == 0
-        use_cutlass_warp_mma &= tile[C_ax_n] % self.arch.cutlass_mma[1] == 0
-        # cutlass_warp_mma currently don't support shared inputs as it uses pipeline approaches
-        use_cutlass_warp_mma &= all([edge.src_node.is_placeholder() for edge in node.inputs])
-        # use pipeline for large reduce ops
-        use_cutlass_warp_mma &= all([x > 64 for x in node.raxis.values()])
-        # cutlass_warp_mma don't support batched mm inside a block
-        for idx, value in enumerate(tile):
-            if idx not in [C_ax_m, C_ax_n]: use_cutlass_warp_mma &= value==1
-        return use_cutlass_warp_mma
+        return False
 
     def _can_implement_layout(self, node: IRNode, td: TileDict):
         A_ax_m, A_ax_k, B_ax_k, B_ax_n, C_ax_m, C_ax_n = node.infer_tensorcore_axis()

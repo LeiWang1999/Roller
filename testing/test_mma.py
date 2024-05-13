@@ -1,10 +1,10 @@
-import memopt
+import roller
 import numpy as np
-from memopt.arch import *
-from memopt.config import Config, Stride
-from memopt.graph import IRNode, OutputNode
-from memopt.policy import *
-from memopt.reference import get_subgraph_reference_outputs
+from roller.arch import *
+from roller.config import Config, Stride
+from roller.graph import IRNode, OutputNode
+from roller.policy import *
+from roller.reference import get_subgraph_reference_outputs
 
 from ops import *
 
@@ -21,11 +21,11 @@ def test_policy(ir, input_dict, name="test", check=True):
     configs = policy.emit_config(20)
 
     compile_results = []
-    cgen = memopt.CodeGenerator()
+    cgen = roller.CodeGenerator()
     for config in configs:
         cpresult = cgen.compile(output_nodes, config, "cuda", kernel_name="Fused")
         compile_results.append(cpresult)
-    memopt.utils.compile_and_load_parallel(compile_results, arch)
+    roller.utils.compile_and_load_parallel(compile_results, arch)
     best_latency = 10000
     best = None
     values = []
